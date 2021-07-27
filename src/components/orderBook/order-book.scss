@@ -1,0 +1,109 @@
+$backgroundColor: #333;
+$accentBackground: #616161;
+$mainFontColor: #eeeeee;
+$mainBoxShadow: rgba(0, 0, 0, .12) 0px 2px 1px -1px, rgba(0, 0, 0, .05) 0px 1px 1px 0px, rgba(0, 0, 0, .5) 0px 1px 3px 0px;
+
+#order-book {
+    width: 100%;
+    max-width: 1400px;
+    height: 100%;
+    max-height: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background: $backgroundColor;
+    color: $mainFontColor;
+    box-shadow: $mainBoxShadow;
+    border-radius: 2px;
+
+    #grid-header {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 50px;
+
+        #grid-header-title {
+            user-select: none;
+            margin-left: 10px;
+            width: 100px;
+        }
+
+        #grid-header-spread {
+        }
+
+        .grid-header-dropdown {
+            height: 30px;
+            margin-right: 10px;
+            position: relative;
+            width: 100px;
+            text-align: center;
+            border-radius: 7px;
+            background: $accentBackground;
+            box-shadow: $mainBoxShadow;
+            border: 1px solid transparent;
+            transition: 100ms ease-in-out all;
+            
+            &.active {
+                border: 1px solid $mainFontColor;
+                background: darken($accentBackground, 5%);
+            }
+
+            #dropdown-text {
+                height: 30px;
+                width: 100px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                user-select: none;
+            }
+
+            #dropdown-options {
+                position: absolute;
+                width: 100px;
+                right: 0px;
+                top: 43px;
+                background: $accentBackground;
+                box-shadow: $mainBoxShadow;
+
+                .dropdown-option {
+                    height: 28px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    user-select: none;
+                    cursor: pointer;
+                    transition: 150ms ease-in-out all;
+
+                    &:hover {
+                        background: darken($accentBackground, 10%);
+                    }
+                }
+            }
+        }
+    }
+
+    #dfb-container {
+        height: 58px;
+
+        .dfb-button {
+            height: 38px;
+            width: 120px;
+            color: white;
+            background: #1565c0;
+            border: none;
+            border-radius: 4px;
+            box-shadow: $mainBoxShadow;
+            font-size: 100%;
+            user-select: none;
+            cursor: pointer;
+
+            &.kill {
+                background: #d50000;
+                margin-left: 20px;
+            }
+        }
+    }
+}
