@@ -1,10 +1,114 @@
+const feed = new WebSocket("wss://www.cryptofacilities.com/ws/v1");
+let buyArray = [];
+let sellArray = [];
+let workingBuyArray = [];
+let workingSellArray = [];
+
+
+feed.onopen = (e) => {
+    const subscribeMessage = {
+        event: "subscribe",
+        feed: "book_ui_1",
+        product_ids: ["PI_XBTUSD"],
+    };
+    
+    feed.send(JSON.stringify(subscribeMessage));
+
+    console.log('connected');
+};
+
+feed.onmessage = async (event) => {
+    const data = JSON.parse(event.data);
+    if (data.feed === 'book_ui_1_snapshot') {
+        hashArray('first buy', data.asks);
+        hashArray('first sell', data.bids);
+        postMessage({type: 'first send', data: {buyArray, sellArray}});
+    } else if (data.feed === 'book_ui_1' && !data.event) {
+        
+        if (data.bids.length) {
+            hashArray('sell', data.bids)
+        }
+        if (data.asks.length) {
+            hashArray('buy', data.asks)
+        }
+        
+    }
+}
+
+const hashArray = (type, newData) => {
+
+    const hashed = newData.map((delta) => {
+        const [price, size] = delta;
+        return { price, size }
+        }).reduce((acc, curr) => {
+            return { ...acc, [curr.price]: curr }
+    }, {})
+      
+    if (type === 'buy') {
+        newData.forEach(item => {
+            const [ price, size ] = item
+            if (buyArray[price]) {
+                if (size === 0) {
+                    delete buyArray[price]
+                } else {
+                    buyArray[price].price = price
+                }
+            } else {
+                if (size !== 0) {
+                    buyArray[price] = {price, size}
+                }
+            }
+        })
+        return buyArray
+    }
+
+    if (type === 'first buy') {
+        workingBuyArray = hashed
+        buyArray = hashed
+        return buyArray
+    }
+
+    if (type === 'first sell') {
+        workingSellArray = hashed
+        sellArray = hashed
+        return sellArray
+    }
+
+    if (type === 'sell') {
+        newData.forEach(item => {
+            const [ price, size ] = item
+            if (sellArray[price]) {
+                if (size === 0) {
+                    delete sellArray[price]
+                } else {
+                    sellArray[price].price = price
+                }
+            } else {
+                if (size !== 0) {
+                    sellArray[price] = {price, size}
+                }
+            }
+        })
+        return sellArray
+    }
+}
+
+console.log('Running')
+
+setInterval(() => {
+    postMessage({type: 'Updates', data: {buyArray, sellArray}});
+}, 2000)
+
+
 
 
 self.addEventListener('message', (ev)=>{
+        // if (ev.data.msg === 'start interval') {
+        //     console.log('recieved')
+        //         postMessage({type: 'first send', data: {buyArray, sellArray}});
+        // }
     
-    const feed = new WebSocket("wss://www.cryptofacilities.com/ws/v1");
 
-    let localSocket = feed
     //   const killFeed = async () => {
     //     const unsubscribeMessage = {
     //         event: "unsubscribe",
@@ -18,48 +122,14 @@ self.addEventListener('message', (ev)=>{
     //   }
 
         
-            localSocket.onopen = (e) => {
-                localSocket = e.target
-                if (ev.data.msg === 'Start') {
-                    const subscribeMessage = {
-                        event: "subscribe",
-                        feed: "book_ui_1",
-                        product_ids: ["PI_XBTUSD"],
-                    };
-                    
-                    localSocket.send(JSON.stringify(subscribeMessage));
-    
-                    // setTimeout(() => {
-                    //     feed.send(JSON.stringify(unsubscribeMessage));
-                    // }, 2000)
-                    console.log('connected')
-                }
-            };
+            
 
             
                 
 
 
-            let buyArray = [];
-            let sellArray = [];
-
-            const editArray = (type, newData) => {
-                // console.log(type, newData)
-
-                const hashed = newData.map((delta) => {
-                    const [price, size] = delta;
-                    // const total = getPrevDeltaSize(...) + size;
-                    return { price, size }
-                  }).reduce((acc, curr) => {
-                    return { ...acc, [curr.price]: curr }
-                  }, {})
-                  
-                //   console.log('hash', hashed)
-
-                //   buyArray = hashed
-
-
-            }
+            
+            
 
             const updateMainData = () => {
                 // console.log('Running this', buyArray)
@@ -72,48 +142,7 @@ self.addEventListener('message', (ev)=>{
     
             
 
-            localSocket.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                // postMessage(JSON.parse(event.data));
-                // console.log('test', data)
-                console.log('here', data)
-                if (data.feed === 'book_ui_1_snapshot') {
-                    buyArray = data.asks.map((item) => {
-                        return {
-                            price: item[0],
-                            size: item[1],
-                        }
-                    });
-                    sellArray = data.bids.map((item) => {
-                        return {
-                            price: item[0],
-                            size: item[1],
-                        }
-                    });
-                    
-                    postMessage({type: 'first send', data: buyArray});
-                } else if (data.feed === 'book_ui_1' && !data.event) {
-                    
-                    if (data.bids.length) {
-                        // editArray('buy', data.bids.map((item) => {
-                        //     return {
-                        //         price: item[0],
-                        //         size: item[1],
-                        //     }
-                        // }))
-                        editArray('sell', data.bids)
-                    }
-                    // if (data.asks.length) {
-                    //     editArray('sell', data.asks.map((item) => {
-                    //         return {
-                    //             price: item[0],
-                    //             size: item[1],
-                    //         }
-                    //     }))
-                    // }
-                }
-                // postMessage({buyArray, sellArray});
-            }
+            
             updateMainData()
         
             if (ev.data.msg === 'Stop') {
@@ -123,7 +152,29 @@ self.addEventListener('message', (ev)=>{
                     product_ids: ["PI_XBTUSD"],
                 };
                 console.log('unsubscribed', feed.readyState);
-                localSocket.send(JSON.stringify(unsubscribeMessage));
+                feed.send(JSON.stringify(unsubscribeMessage));
+            }
+            if (ev.data.msg === 'Toggle') {
+                // const 
+
+
+                const unsubscribeMessage = {
+                    event: "unsubscribe",
+                    feed: "book_ui_1",
+                    product_ids: [`PI_${ev.data.selectedMarket}USD`],
+                };
+                feed.send(JSON.stringify(unsubscribeMessage));
+                console.log(`Unsubbed from ${ev.data.selectedMarket}`);
+
+                const subscribeMessage = {
+                    event: "subscribe",
+                    feed: "book_ui_1",
+                    product_ids: [`PI_${ev.data.selectedMarket}USD`],
+                };
+                
+                feed.send(JSON.stringify(subscribeMessage));
+                console.log(`Subbed to ${ev.data.selectedMarket}`);
+
             }
         
 })

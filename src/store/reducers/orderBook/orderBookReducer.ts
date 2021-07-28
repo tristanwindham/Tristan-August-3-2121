@@ -8,6 +8,8 @@ interface OrderBookState {
     grouping: number[],
     selectedMarket: string,
     selectedGroup: number,
+    buyArray: object[],
+    sellArray: object[],
 }
 
 const initialState: OrderBookState = {
@@ -15,6 +17,8 @@ const initialState: OrderBookState = {
     grouping: [0.5, 1, 2.5],
     selectedMarket: 'XBT',
     selectedGroup: .5,
+    buyArray: [],
+    sellArray: [],
 }
 
 export const orderBookSlice = createSlice({
@@ -35,6 +39,12 @@ export const orderBookSlice = createSlice({
     },
     changeSelectedGroup: (state, action: PayloadAction<number>) => {
         state.selectedGroup = action.payload;
+    },
+    changeBuyArray: (state, action: PayloadAction<object[]>) => {
+        state.buyArray = action.payload;
+    },
+    changeSellArray: (state, action: PayloadAction<object[]>) => {
+        state.sellArray = action.payload;
     },
     //   decrement: (state) => {
     //     state.value -= 1;
@@ -61,7 +71,9 @@ export const orderBookSlice = createSlice({
   export const selectMarket = (state: RootState) => state.orderBook.selectedMarket;
   export const selectGrouping = (state: RootState) => state.orderBook.grouping;
   export const selectGroup = (state: RootState) => state.orderBook.selectedGroup;
+  export const selectBuyArray = (state: RootState) => state.orderBook.buyArray
+  export const selectSellArray = (state: RootState) => state.orderBook.sellArray
 
-  export const { changeSelectedMarket, changeSelectedGroup } = orderBookSlice.actions;
+  export const { changeSelectedMarket, changeSelectedGroup, changeBuyArray, changeSellArray } = orderBookSlice.actions;
 
   export default orderBookSlice.reducer;

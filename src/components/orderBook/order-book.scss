@@ -85,6 +85,26 @@ $mainBoxShadow: rgba(0, 0, 0, .12) 0px 2px 1px -1px, rgba(0, 0, 0, .05) 0px 1px 
         }
     }
 
+    #grid {
+        display: flex;
+        // flex-direction: column;
+        .grid-half {
+            .grid-size {
+                width: 100px;
+            }
+            .grid-price {
+                // margin-right: 50px;
+                width: 100px;
+                &.buy {
+                    color: green;
+                }
+                &.sell {
+                    color: red;
+                }
+            }
+        }
+    }
+
     #dfb-container {
         height: 58px;
 

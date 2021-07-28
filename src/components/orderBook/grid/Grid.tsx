@@ -1,71 +1,36 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent } from "react";
+import { selectBuyArray, selectSellArray, } from './../../../store/reducers/orderBook/orderBookReducer';
+import { useAppSelector } from '../../../app/hooks';
 
-// import orderBook from './../../../workers''
-
-let worker: Worker
-
-    worker = new Worker('orderBookFeed.js');
 
 const Grid: FunctionComponent = () => {
-    const [ buyArray, setBuyArray ] = useState<Array<{price: number, size: number}>>([]);
-    const [ sellArray, setSellArray ] = useState<Array<{}>>([]);
-    
-    const feed = new WebSocket("wss://www.cryptofacilities.com/ws/v1");
-    // feed.onopen = () => {
-    //         const subscribeMessage = {
-    //             event: "subscribe",
-    //             feed: "book_ui_1",
-    //             product_ids: ["PI_XBTUSD"],
-    //         };
-            
-    //         feed.send(JSON.stringify(subscribeMessage));
-
-    //         // setTimeout(() => {
-    //         //     feed.send(JSON.stringify(unsubscribeMessage));
-    //         // }, 2000)
-    //         console.log('connected')
-    // };
-
-    // feed.onmessage = (event) => {
-    //         const data = JSON.parse(event.data);
-    //         // postMessage(JSON.parse(event.data));
-    //         // console.log('test', data)
-    //         console.log('here', data)
-                
-    //     if (!buyArray.length) {
-            
-    //     }
-    // }
-    // worker.postMessage({msg: 'Start'});
-
-    worker.onmessage = (e) => {
-        // console.log('e', e.data)
-        setBuyArray(e.data.data)
-        // if (e.data.buyArray !== buyArray && buyArray.length === 0) {
-        //     // setBuyArray([...e.data.buyArray])
-        //     console.log('New Buy Array', [...e.data.buyArray])
-        // }
-        // if (e.data.sellArray !== sellArray && buyArray.length === 0) {
-        //     // setSellArray([...e.data.sellArray])
-        //     console.log('New Sell Array', sellArray, e.data.sellArray)
-        // }
-        
-    }
-    
+    const buyArray: any = useAppSelector(selectBuyArray);
+    const sellArray: any = useAppSelector(selectSellArray);
 
     return (
         <div>
-            <div style={{ background: 'blue', height: 50, width: 50 }} onClick={() => worker.postMessage({msg: 'Start'})}>Start</div>
-            <div style={{ background: 'red', height: 50, width: 50 }} onClick={() => worker.postMessage({msg: 'Stop'})}>Stop</div>
-
-            {
-                buyArray.map((item, idx) => {
-                    return <div style={{ display: 'flex' }} key={idx}>
-                        <div style={{ marginRight: 50 }}>{item.price}</div>
-                        <div>{item.size}</div>
-                    </div>
-                })
-            }
+            <div id="grid">
+                <div className='grid-half'>
+                    {
+                        buyArray.map((item: any, idx: number) => {
+                            return <div style={{ display: 'flex', }} key={idx}>
+                                <div className="grid-size">{item.size}</div>
+                                <div className="grid-price buy">{item.price}</div>
+                            </div>
+                        })
+                    }
+                </div>
+                <div className='grid-half'>
+                    {
+                        sellArray.map((item: any, idx: number) => {
+                            return <div style={{ display: 'flex',  }} key={idx}>
+                                <div className="grid-price sell">{item.price}</div>
+                                <div className="grid-size">{item.size}</div>
+                            </div>
+                        })
+                    }
+                </div>
+            </div>
         </div>
     );
 };
