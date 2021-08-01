@@ -1,24 +1,21 @@
-import { FunctionComponent } from 'react';
 import { useAppDispatch } from '../../../app/hooks';
-import { changeSelectedMarket, changeBuyArray, changeSellArray } from "./../../../store/reducers/orderBook/orderBookReducer";
-import { orderBy } from 'lodash'
+import { changeSelectedMarket } from "./../../../store/reducers/orderBook/orderBookReducer";
 
-const worker = new Worker('orderBookFeed.js');
+interface DataFeedButtonsProps {
+    toggleFeed: () => void,
+    killFeed: () => void,
+}
 
-const DataFeedButtons: FunctionComponent = () => {
+const DataFeedButtons: React.FC<DataFeedButtonsProps> = ({ toggleFeed, killFeed }) => {
     const dispatch = useAppDispatch();
-
-    worker.onmessage = (e) => {
-        dispatch(changeBuyArray(Object.values(orderBy(e.data.data.buyArray, ['price'], ['asc'])).slice(0,25)));
-        dispatch(changeSellArray(Object.values(orderBy(e.data.data.sellArray, ['price'], ['desc'])).slice(0,25)));
-    }
     
     return (
         <div id="dfb-container">
              <button className="dfb-button" onClick={() => {
                 dispatch(changeSelectedMarket())
+                toggleFeed()
             }}>Toggle Feed</button>
-            <button className="dfb-button kill">Kill Feed</button>
+            <button className="dfb-button kill" onClick={() => killFeed()}>Kill Feed</button>
         </div>
     );
 };
