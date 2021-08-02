@@ -6,10 +6,9 @@ import { useAppSelector, useAppDispatch } from '../../../app/hooks';
 export const GroupDropDown: FunctionComponent = () => {
     const [ isOpen, setIsOpen ] = useState<boolean>(false);
     
-    const dispatch = useAppDispatch();
-
     const selectedGroup: number = useAppSelector(selectGroup);
-    const groupingValues = useAppSelector(selectGrouping);
+    const groupingValues: number[] = useAppSelector(selectGrouping);
+    const dispatch = useAppDispatch();
     
     return (
         <div className={`grid-header-dropdown ${isOpen ? 'active' : null}`} >

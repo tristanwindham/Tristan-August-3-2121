@@ -1,17 +1,16 @@
-import { FunctionComponent } from "react";
-import { selectBidArray, selectAskArray } from './../../../store/reducers/orderBook/orderBookReducer';
+import { selectBidData, selectAskData } from './../../../store/reducers/orderBook/orderBookReducer';
 import { useAppSelector } from '../../../app/hooks';
 import numeral from 'numeral'
 
-interface dataArray {
+interface dataObject {
     price: number,
     size: number,
     total: number,
 }
 
-const Grid: FunctionComponent = () => {
-    const bidArray: dataArray[] = useAppSelector(selectBidArray);
-    const askArray: dataArray[] = useAppSelector(selectAskArray);
+const Grid: React.FC = () => {
+    const bidData: dataObject[] = useAppSelector(selectBidData);
+    const askData: dataObject[] = useAppSelector(selectAskData);
 
     return (
         <div id="grid">
@@ -22,9 +21,9 @@ const Grid: FunctionComponent = () => {
                     <div className="grid-price buy-header">PRICE</div>
                 </div>
                 {
-                    bidArray.map((item: any, idx: number) => {
-                        const depthIdx = bidArray.length < 25 ? bidArray.length - 1 : 24
-                        const depth = (item.total / bidArray[depthIdx].total) * 100;
+                    bidData.map((item: dataObject, idx: number) => {
+                        const depthIdx = bidData.length < 25 ? bidData.length - 1 : 24
+                        const depth = (item.total / bidData[depthIdx].total) * 100;
                         return <div className="grid-row" key={idx}>
                             <div className="grid-depth buy" style={{ width: `${Math.round(depth)}%` }}></div>
                             <div className="grid-size">{numeral(item.total).format('0,0')}</div>
@@ -41,9 +40,9 @@ const Grid: FunctionComponent = () => {
                     <div className="grid-size sell-header">TOTAL</div>
                 </div>
                 {
-                    askArray.map((item: any, idx: number) => {
-                        const depthIdx = askArray.length < 25 ? askArray.length - 1 : 24
-                        const depth = (item.total / askArray[depthIdx].total) * 100;
+                    askData.map((item: dataObject, idx: number) => {
+                        const depthIdx = askData.length < 25 ? askData.length - 1 : 24
+                        const depth = (item.total / askData[depthIdx].total) * 100;
                         return <div className="grid-row" key={idx}>
                             <div className="grid-depth sell" style={{ width: `${Math.round(depth)}%` }}></div>
                             <div className="grid-price sell">{numeral(item.price).format('0,0.00')}</div>
