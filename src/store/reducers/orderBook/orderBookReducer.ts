@@ -1,6 +1,4 @@
-// createAsyncThunk, 
 import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
-// AppThunk
 import { RootState } from '../../store'
 import { orderBy } from 'lodash'
 
@@ -9,8 +7,8 @@ interface OrderBookState {
     grouping: number[],
     selectedMarket: string,
     selectedGroup: number,
-    bidArray: { price: number, size: number, total: number }[],
-    askArray: { price: number, size: number, total: number }[],
+    bidData: { price: number, size: number, total: number }[],
+    askData: { price: number, size: number, total: number }[],
     spread: string,
 }
 
@@ -19,25 +17,32 @@ const initialState: OrderBookState = {
     grouping: [0.5, 1, 2.5],
     selectedMarket: 'XBT',
     selectedGroup: .5,
-    bidArray: [],
-    askArray: [],
+    bidData: [],
+    askData: [],
     spread: 'Spread:',
 }
 
-const calculateSpread = (state: OrderBookState) => {
-    if (!current(state).bidArray[0]) return
-    if (!current(state).askArray[0]) return
+interface DataObject {
+    price: number, 
+    size: number, 
+    total: number,
+}
 
-    const highestAsk = current(state).askArray[0].price;
-    const lowestBid = current(state).bidArray[0].price;
+const calculateSpread = (state: OrderBookState) => {
+    if (!current(state).bidData[0]) return
+    if (!current(state).askData[0]) return
+
+    const highestAsk = current(state).askData[0].price;
+    const lowestBid = current(state).bidData[0].price;
     const spreadValue = highestAsk - lowestBid;
 
     state.spread = `Spread: ${Math.abs(spreadValue).toFixed(1)} (${Math.abs(((spreadValue / highestAsk) * 100)).toFixed(2)}%)` 
 }
 
-const summarizeRows = (state: OrderBookState, dataSource: { price: number, size: number, total: number }[]) => {
+const summarizeRows = (state: OrderBookState, dataSource: DataObject[]) => {
     const groupTickSize = current(state).selectedGroup;
-    return dataSource.reduce((acc: any, curr) => {
+
+    return dataSource.reduce((acc: { [key: number]: DataObject }, curr) => {
         const roundedPrice = groupTickSize * Math.floor(curr.price / groupTickSize);
         if(acc[roundedPrice]) {
             acc[roundedPrice] = {
@@ -71,22 +76,17 @@ export const orderBookSlice = createSlice({
         },
         changeSelectedGroup: (state, action: PayloadAction<number>) => {
             state.selectedGroup = action.payload;
-            state.askArray = orderBy(Object.values(summarizeRows(state, state.askArray)), 'price', 'asc');
-            state.bidArray = orderBy(Object.values(summarizeRows(state, state.bidArray)), 'price', 'desc');
+            state.askData = orderBy(Object.values(summarizeRows(state, state.askData)), 'price', 'asc');
+            state.bidData = orderBy(Object.values(summarizeRows(state, state.bidData)), 'price', 'desc');
         },
-        changeBidArray: (state, action: PayloadAction<{ price: number, size: number, total: number }[]>) => {
-            // Sets the value of the buy array while also calculating and
-            // setting the totals values for each record
-            state.bidArray = action.payload;
-            state.bidArray = orderBy(Object.values(summarizeRows(state, state.bidArray)), 'price', 'desc');
+        changeBidData: (state, action: PayloadAction<DataObject[]>) => {
+            state.bidData = action.payload;
+            state.bidData = orderBy(Object.values(summarizeRows(state, state.bidData)), 'price', 'desc');
         },
-        changeAskArray: (state, action: PayloadAction<{ price: number, size: number,  total: number }[]>) => {
-            // Sets the value of the sell array while also calculating and
-            // setting the totals values for each record
-            state.askArray = action.payload;
-            state.askArray = orderBy(Object.values(summarizeRows(state, state.askArray)), 'price', 'asc');
-
-            calculateSpread(state)
+        changeAskData: (state, action: PayloadAction<DataObject[]>) => {
+            state.askData = action.payload;
+            state.askData = orderBy(Object.values(summarizeRows(state, state.askData)), 'price', 'asc');
+            calculateSpread(state);
         },
     },
   });
@@ -94,10 +94,10 @@ export const orderBookSlice = createSlice({
   export const selectMarket = (state: RootState) => state.orderBook.selectedMarket;
   export const selectGrouping = (state: RootState) => state.orderBook.grouping;
   export const selectGroup = (state: RootState) => state.orderBook.selectedGroup;
-  export const selectBidArray = (state: RootState) => state.orderBook.bidArray
-  export const selectAskArray = (state: RootState) => state.orderBook.askArray
-  export const selectSpread = (state: RootState) => state.orderBook.spread
+  export const selectBidData = (state: RootState) => state.orderBook.bidData;
+  export const selectAskData = (state: RootState) => state.orderBook.askData;
+  export const selectSpread = (state: RootState) => state.orderBook.spread;
 
-  export const { changeSelectedMarket, changeSelectedGroup, changeBidArray, changeAskArray } = orderBookSlice.actions;
+  export const { changeSelectedMarket, changeSelectedGroup, changeBidData, changeAskData } = orderBookSlice.actions;
 
   export default orderBookSlice.reducer;

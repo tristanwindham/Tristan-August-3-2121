@@ -1,34 +1,41 @@
 import GridHeader from './gridHeader/GridHeader';
 import Grid from './grid/Grid';
 import DataFeedButtons from './dataFeedButtons/DataFeedButtons';
-import { changeAskArray, changeBidArray } from '../../store/reducers/orderBook/orderBookReducer';
+import { changeAskData, changeBidData } from '../../store/reducers/orderBook/orderBookReducer';
 import { useAppDispatch } from '../../app/hooks';
+import {Worker as JestWorker} from 'jest-worker';
+import { wrap } from 'comlink';
 import './order-book.scss';
 
-const worker = new Worker('orderBookFeed.js', {type: 'module'});
+// Fire up the web worker when the component loads in.
+const worker = new Worker('../../workers/orderBookWorker', {name: 'runTestWorker', type: 'module'});
+const { startUpFeed, sendMessage } = wrap<import('../../workers/orderBookWorker').OrderBookWorker>(worker);
+startUpFeed();
 
 const OrderBook: React.FC = () => {
     const dispatch = useAppDispatch();
 
     worker.onmessage = (e) => {
-        dispatch(changeBidArray(e.data.data.bidArray));
-        dispatch(changeAskArray(e.data.data.askArray));
-    }
+        if (!e.data.data) return
+        dispatch(changeBidData(e.data.data.bidData));
+        dispatch(changeAskData(e.data.data.askData));
+    };
 
     const toggleFeed = () => {
-        worker.postMessage({ msg: 'Toggle' })
-    }
+        sendMessage('Toggle Feed')
+    };
+
     const killFeed = () => {
-        worker.postMessage({ msg: 'Kill Feed' })
-    }
+        sendMessage('Kill Feed')
+    };
 
     return (
-        <div id="order-book">
+        <section id="order-book">
             <GridHeader />
             <Grid />
             <DataFeedButtons  toggleFeed={() => toggleFeed()} killFeed={() => killFeed()}/>
-        </div>
-    )
-}
+        </section>
+    );
+};
 
-export default OrderBook
+export default OrderBook;
