@@ -3,7 +3,6 @@ import Grid from './grid/Grid';
 import DataFeedButtons from './dataFeedButtons/DataFeedButtons';
 import { changeAskData, changeBidData } from '../../store/reducers/orderBook/orderBookReducer';
 import { useAppDispatch } from '../../app/hooks';
-import {Worker as JestWorker} from 'jest-worker';
 import { wrap } from 'comlink';
 import './order-book.scss';
 
