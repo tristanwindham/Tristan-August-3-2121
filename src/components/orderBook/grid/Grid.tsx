@@ -24,7 +24,7 @@ const Grid: React.FC = () => {
     }
 
     return (
-        <div id="grid">
+        <div className="grid">
             <div className='grid-half'>
                     { isMobile ? 
                         null
@@ -37,11 +37,12 @@ const Grid: React.FC = () => {
                     }
                 {
                     bidData.map((item: dataObject, idx: number) => {
+                        // Calculates each bid row's depth percentage
                         const depthIdx = bidData.length < dataLength ? bidData.length - 1 : dataLength - 1;
                         const depth = (item.total / bidData[depthIdx].total) * 100;
+                        
                         return <div className="grid-row" key={idx}>
                             <div className={`grid-depth buy ${isMobile ? 'mobile' : ''}`} style={{ width: `${Math.round(depth)}%` }}></div>
-
                             {/* Swaps the column layout if mobile screen size detected. */}
                             { isMobile ? 
                                 <Fragment>
@@ -61,7 +62,9 @@ const Grid: React.FC = () => {
                     }).slice(0, dataLength)
                 }
             </div>
-            { isMobile ? <div id="grid-spread">{spread}</div> : null }
+
+            { isMobile ? <div className="grid-spread">{spread}</div> : null }
+
             <div className='grid-half'>
                 <div className="grid-row header">
                     <div className={`grid-price sell-header ${isMobile ? 'mobile' : ''}`}>PRICE</div>
@@ -70,9 +73,12 @@ const Grid: React.FC = () => {
                 </div>
                 {
                     sortedAskData.map((item: dataObject, idx: number) => {
+                        // Calculates each ask row's depth percentage
                         let depthIdx = sortedAskData.length < dataLength ? sortedAskData.length - 1 : dataLength - 1;
-                        if (isMobile) depthIdx = 0
+                        // Calculate on opposite end of array if in mobile mode.
+                        if (isMobile) depthIdx = 0;
                         const depth = (item.total / sortedAskData[depthIdx].total) * 100;
+
                         return <div className="grid-row" key={idx}>
                             <div className="grid-depth sell" style={{ width: `${Math.round(depth)}%` }}></div>
                             <div className={`grid-price sell ${isMobile ? 'mobile' : ''}`}>{numeral(item.price).format('0,0.00')}</div>

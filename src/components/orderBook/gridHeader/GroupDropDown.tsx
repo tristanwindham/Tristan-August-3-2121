@@ -12,8 +12,8 @@ export const GroupDropDown: FunctionComponent = () => {
     
     return (
         <div className={`grid-header-dropdown ${isOpen ? 'active' : null}`} >
-            <div id="dropdown-text" onClick={() => setIsOpen(!isOpen)}>{selectedGroup}</div>
-            <div id="dropdown-options">
+            <div className="dropdown-text" onClick={() => setIsOpen(!isOpen)}>{selectedGroup}</div>
+            <div className="dropdown-options">
                 { isOpen ?
                     groupingValues.map((value, idx) => {
                         return <div className="dropdown-option" key={idx} onClick={() => {

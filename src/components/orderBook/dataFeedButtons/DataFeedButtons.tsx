@@ -10,7 +10,7 @@ const DataFeedButtons: React.FC<DataFeedButtonsProps> = ({ toggleFeed, killFeed 
     const dispatch = useAppDispatch();
     
     return (
-        <div id="dfb-container">
+        <div className="dfb-container">
              <button className="dfb-button" onClick={() => {
                 dispatch(changeSelectedMarket())
                 toggleFeed()

@@ -3,7 +3,7 @@ $accentBackground: #616161;
 $mainFontColor: #eeeeee;
 $mainBoxShadow: rgba(0, 0, 0, .12) 0px 2px 1px -1px, rgba(0, 0, 0, .05) 0px 1px 1px 0px, rgba(0, 0, 0, .5) 0px 1px 3px 0px;
 
-#order-book {
+section#order-book {
     width: 100%;
     max-width: 1450px;
     height: 100%;
@@ -24,16 +24,15 @@ $mainBoxShadow: rgba(0, 0, 0, .12) 0px 2px 1px -1px, rgba(0, 0, 0, .05) 0px 1px 
         background: none;
         min-width: 100%;
     }
-
     
-    #grid-header {
+    .grid-header {
         width: 100%;
         display: flex;
         align-items: center;
         justify-content: space-between;
         height: 50px;
 
-        #grid-header-title {
+        .grid-header-title {
             user-select: none;
             margin-left: 10px;
             width: 100px;
@@ -65,7 +64,7 @@ $mainBoxShadow: rgba(0, 0, 0, .12) 0px 2px 1px -1px, rgba(0, 0, 0, .05) 0px 1px 
                 background: darken($accentBackground, 5%);
             }
 
-            #dropdown-text {
+            .dropdown-text {
                 height: 30px;
                 width: 100px;
                 display: flex;
@@ -80,7 +79,7 @@ $mainBoxShadow: rgba(0, 0, 0, .12) 0px 2px 1px -1px, rgba(0, 0, 0, .05) 0px 1px 
                 }
             }
 
-            #dropdown-options {
+            .dropdown-options {
                 position: absolute;
                 width: 100px;
                 right: 0px;
@@ -114,13 +113,13 @@ $mainBoxShadow: rgba(0, 0, 0, .12) 0px 2px 1px -1px, rgba(0, 0, 0, .05) 0px 1px 
         @media only screen and (max-width: 900px) {
             height: 8%;
 
-            #grid-header-title {
+            .grid-header-title {
                 width: 50px;
             }
         }
     }
 
-    #grid {
+    .grid {
         display: flex;
         width: 100%;
         height: 100%;
@@ -133,7 +132,7 @@ $mainBoxShadow: rgba(0, 0, 0, .12) 0px 2px 1px -1px, rgba(0, 0, 0, .05) 0px 1px 
             margin-top: 0px;
         }
 
-        #grid-spread {
+        .grid-spread {
             height: 10%;
             width: 100%;
             display: flex;
@@ -178,7 +177,6 @@ $mainBoxShadow: rgba(0, 0, 0, .12) 0px 2px 1px -1px, rgba(0, 0, 0, .05) 0px 1px 
                     font-weight: 600;
                     font-size: 18px;
                     letter-spacing: 1px;
-
                     @media only screen and (max-height: 650px) {
                         font-size: 14px;
                         border: none;
@@ -210,14 +208,13 @@ $mainBoxShadow: rgba(0, 0, 0, .12) 0px 2px 1px -1px, rgba(0, 0, 0, .05) 0px 1px 
                     z-index: 1;
                     text-align: right;
                     padding-right: 20px;
-
-                    &.mobile {
-                        padding-right: 10px;
-                    }
-
                     @media only screen and (max-width: 900px) {
                         width: 33%;
                         padding-right: 0px;
+                    }
+
+                    &.mobile {
+                        padding-right: 10px;
                     }
 
                     &.sell {
@@ -236,7 +233,6 @@ $mainBoxShadow: rgba(0, 0, 0, .12) 0px 2px 1px -1px, rgba(0, 0, 0, .05) 0px 1px 
                         &.mobile {
                             padding-right: 10px;
                         }
-
                         @media only screen and (max-width: 900px) {
                             padding-right: 0px;
                             width: 33%;
@@ -298,13 +294,10 @@ $mainBoxShadow: rgba(0, 0, 0, .12) 0px 2px 1px -1px, rgba(0, 0, 0, .05) 0px 1px 
                 }
             }
         }
-
-        
     }
 
-    #dfb-container {
+    .dfb-container {
         height: 58px;
-
         @media only screen and (max-width: 900px) {
             height: 8%;
         }
@@ -320,11 +313,13 @@ $mainBoxShadow: rgba(0, 0, 0, .12) 0px 2px 1px -1px, rgba(0, 0, 0, .05) 0px 1px 
             font-size: 100%;
             user-select: none;
             cursor: pointer;
-
             @media only screen and (max-width: 900px) {
                 height: 70%;
             }
-
+            @media only screen and (max-height: 450px) {
+                font-size: 12px;
+                height: 25px;
+            }
 
             &.kill {
                 background: #d50000;

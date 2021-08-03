@@ -10,12 +10,12 @@ const GridHeader: React.FC = () => {
     const isDesktop: boolean = useMediaQuery({ query: `(min-width: 900px)` });
 
     return (
-        <div id="grid-header">
-            <div id="grid-header-title">{selectedMarket}</div>
-            { isDesktop ? <div id="grid-header-spread">{spread}</div> : null }
+        <div className="grid-header">
+            <div className="grid-header-title">{selectedMarket}</div>
+            { isDesktop ? <div className="grid-header-spread">{spread}</div> : null }
             <GroupDropDown />
         </div>
-    )
-}
+    );
+};
 
-export default GridHeader
+export default GridHeader;
